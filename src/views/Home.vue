@@ -119,7 +119,15 @@ export default {
       const deleteEnter = ['Enter'].includes(evt?.key)
       if ((deleteCall && this.userId.length === 0) || !evt?.key || deleteEnter) {
         const url = `${this.$apiService.BASEURL}/users/${this.userId || ''}`
-        this.table.data = await this.$apiService.get(url)
+        const result = await this.$apiService.get(url)
+        const r = result.map(item => {
+          if (typeof item === 'object') {
+            return item
+          } else {
+            return item
+          }
+        })
+        this.table.data = r
       }
     },
     showModal (evt) {

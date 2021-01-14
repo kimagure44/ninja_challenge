@@ -7,7 +7,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="record in tableData" :key="`record-${record.id}`">
+        <tr v-for="(record, indexRecord) in tableData" :key="`record-${indexRecord}`">
+          <td v-for="(column, indexColumn) in record" :key="`record-${indexRecord}-column-${indexColumn}`">
+            {{ column }}
+          </td>
+          <!--
           <td v-text="record.id" />
           <td v-text="record.firstname" />
           <td v-text="record.lastname" />
@@ -16,7 +20,7 @@
           <td v-text="record.address.street" />
           <td v-text="record.address.city" />
           <td v-text="record.address.country" />
-          <td v-text="record.address.postalcode" />
+          <td v-text="record.address.postalcode" />-->
         </tr>
         <tr v-if="hasRecords">
           <td colspan="9" class="mx-3 is-justify-content-center">
