@@ -25,7 +25,7 @@
     </div>
     <div class="columns custom-table my-5">
       <div class="column">
-        <ninja-table :table-records="results" />
+        <ninja-table :table-data="table.data" :table-columns="table.columns" />
       </div>
     </div>
     <ninja-modal :show-modal.sync="modal.show" @accept-modal="acceptModal">
@@ -80,7 +80,20 @@ export default {
   name: 'Home',
   data () {
     return {
-      results: [],
+      table: {
+        columns: [
+          'ID',
+          'FIRSTNAME',
+          'LASTNAME',
+          'EMAIL',
+          'BIRTHDATE',
+          'STREET',
+          'CITY',
+          'COUNTRY',
+          'POSTAL CODE'
+        ],
+        data: []
+      },
       userId: '',
       modal: {
         show: false,
@@ -106,7 +119,7 @@ export default {
       const deleteEnter = ['Enter'].includes(evt?.key)
       if ((deleteCall && this.userId.length === 0) || !evt?.key || deleteEnter) {
         const url = `${this.$apiService.BASEURL}/users/${this.userId || ''}`
-        this.results = await this.$apiService.get(url)
+        this.table.data = await this.$apiService.get(url)
       }
     },
     showModal (evt) {

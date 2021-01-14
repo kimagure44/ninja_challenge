@@ -3,19 +3,11 @@
     <table class="table is-bordered is-fullwidth is-striped is-narrow is-hoverable">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>FIRSTNAME</th>
-          <th>LASTNAME</th>
-          <th>EMAIL</th>
-          <th>BIRTHDATE</th>
-          <th>STREET</th>
-          <th>CITY</th>
-          <th>COUNTRY</th>
-          <th>POSTAL CODE</th>
+          <th v-for="column in tableColumns" :key="`column-${column}`" v-text="column" />
         </tr>
       </thead>
       <tbody>
-        <tr v-for="record in tableRecords" :key="`record-${record.id}`">
+        <tr v-for="record in tableData" :key="`record-${record.id}`">
           <td v-text="record.id" />
           <td v-text="record.firstname" />
           <td v-text="record.lastname" />
@@ -40,14 +32,18 @@
 export default {
   name: 'ninja-table',
   props: {
-    tableRecords: {
+    tableData: {
+      type: Array,
+      default: () => []
+    },
+    tableColumns: {
       type: Array,
       default: () => []
     }
   },
   computed: {
     hasRecords () {
-      return this.tableRecords.length === 0
+      return this.tableData.length === 0
     }
   }
 }
