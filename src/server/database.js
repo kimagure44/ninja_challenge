@@ -6,7 +6,7 @@ const database = () => {
       day: '2-digit',
       month: '2-digit'
     };
-    for (let id = 0; id < 1000; id++) {
+    for (let id = 1; id <= 1000; id++) {
       const [month, day, year] = Intl.DateTimeFormat('en-US', dateOptions).format(faker.date.past()).split('/');
       data.push({
         id,
