@@ -50,7 +50,6 @@ export default {
       this.$emit('update:showModal', !this.show)
     },
     acceptModal () {
-      debugger
       this.$emit('accept-modal')
     }
   }

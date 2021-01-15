@@ -3,27 +3,36 @@
     <table class="table is-bordered is-fullwidth is-striped is-narrow is-hoverable">
       <thead>
         <tr>
-          <th v-for="column in tableColumns" :key="`column-${column}`" v-text="column" />
+          <th
+            v-for="column in tableColumns"
+            :key="`column-${column.name}`"
+            v-text="column.name"
+          />
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(record, indexRecord) in tableData" :key="`record-${indexRecord}`">
-          <td v-for="(column, indexColumn) in record" :key="`record-${indexRecord}-column-${indexColumn}`">
-            {{ column }}
+        <tr
+          v-for="(record, indexRecord) in tableData"
+          :key="`record-${indexRecord}`"
+        >
+          <td>
+            <div class="is-flex">
+              <button class="button is-success is-small" data-action="PUT" @click="sendAction" :data-id="record.id">
+                <font-awesome-icon icon="edit" />
+              </button>
+              <button class="button is-danger is-small" data-action="DELETE" @click="sendAction" :data-id="record.id">
+                <font-awesome-icon icon="trash" />
+              </button>
+            </div>
           </td>
-          <!--
-          <td v-text="record.id" />
-          <td v-text="record.firstname" />
-          <td v-text="record.lastname" />
-          <td v-text="record.email" />
-          <td v-text="record.birthDate" />
-          <td v-text="record.address.street" />
-          <td v-text="record.address.city" />
-          <td v-text="record.address.country" />
-          <td v-text="record.address.postalcode" />-->
+          <td
+            v-for="(column, indexColumn) in record"
+            :key="`record-${indexRecord}-column-${indexColumn}`"
+            v-text="column"
+          />
         </tr>
         <tr v-if="hasRecords">
-          <td colspan="9" class="mx-3 is-justify-content-center">
+          <td colspan="10" class="mx-3 is-justify-content-center">
             <div class="text-center">No record found</div>
           </td>
         </tr>
@@ -48,6 +57,11 @@ export default {
   computed: {
     hasRecords () {
       return this.tableData.length === 0
+    }
+  },
+  methods: {
+    sendAction (action) {
+      this.$emit('row-action', action)
     }
   }
 }
@@ -76,6 +90,7 @@ export default {
         top: -1px;
         background: #ffffff;
         box-shadow: 0 3px 9px 1px rgba(0,0,0,.1);
+        z-index: 1;
       }
     }
   }

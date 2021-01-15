@@ -3,19 +3,19 @@
     <div class="columns">
       <div class="column">
         <div class="buttons is-justify-content-flex-end">
-          <button class="button is-success" data-action="POST" @click="showModal">NEW USER</button>
-          <button class="button is-success" data-action="PUT" @click="showModal">PUT</button>
-          <button class="button is-danger" data-action="DELETE" @click="showModal">DELETE</button>
+          <button class="button is-success" data-action="POST" @click="showModal">
+            <font-awesome-icon icon="plus" /><span class="mx-3">New User</span>
+          </button>
         </div>
       </div>
-      <div class="column is-one-fifth">
+      <div class="column is-one-quarter">
         <div class="field">
           <div class="control">
             <input
               type="number"
               class="input"
-              placeholder="USER ID"
-              v-model="userId"
+              placeholder="Search by User ID"
+              v-model="filterUserID"
               @keydown.enter="getUsers"
               @keyup.delete="getUsers"
             />
@@ -25,7 +25,11 @@
     </div>
     <div class="columns custom-table my-5">
       <div class="column">
-        <ninja-table :table-data="table.data" :table-columns="table.columns" />
+        <ninja-table
+          :table-data="table.data"
+          :table-columns="table.columns"
+          @row-action="showModal"
+        />
       </div>
     </div>
     <ninja-modal :show-modal.sync="modal.show" @accept-modal="acceptModal">
@@ -36,35 +40,35 @@
         <form ref="form">
           <div class="field">
             <span>First name</span>
-            <input type="text" class="input" placeholder="John" v-model="form.firstname" />
+            <input type="text" class="input" placeholder="John" v-model="form.firstname" :disabled="deleteForm" />
           </div>
           <div class="field">
             <span>Last name</span>
-            <input type="text" class="input" placeholder="Smith" v-model="form.lastname" />
+            <input type="text" class="input" placeholder="Smith" v-model="form.lastname" :disabled="deleteForm" />
           </div>
           <div class="field">
             <span>Email</span>
-            <input type="email" class="input" placeholder="john.smith@example.com" v-model="form.email" />
+            <input type="email" class="input" placeholder="john.smith@example.com" v-model="form.email" :disabled="deleteForm" />
           </div>
           <div class="field">
             <span>First name</span>
-            <input type="date" class="input" placeholder="1980-01-23" v-model="form.birthDate" />
+            <input type="date" class="input" placeholder="1980-01-23" v-model="form.birthDate" :disabled="deleteForm" />
           </div>
           <div class="field">
             <span>First name</span>
-            <input type="text" class="input" placeholder="Lindenstraße 89" v-model="form.address.street" />
+            <input type="text" class="input" placeholder="Lindenstraße 89" v-model="form.addressStreet" :disabled="deleteForm" />
           </div>
           <div class="field">
             <span>First name</span>
-            <input type="text" class="input" placeholder="Freiburg im Breisgau" v-model="form.address.city" />
+            <input type="text" class="input" placeholder="Freiburg im Breisgau" v-model="form.addressCity" :disabled="deleteForm" />
           </div>
           <div class="field">
             <span>First name</span>
-            <input type="text" class="input" placeholder="DE" v-model="form.address.country" />
+            <input type="text" class="input" placeholder="DE" v-model="form.addressCountry" :disabled="deleteForm" />
           </div>
           <div class="field">
             <span>First name</span>
-            <input type="text" class="input" placeholder="42030" v-model="form.address.postalcode" />
+            <input type="text" class="input" placeholder="42030" v-model="form.addressPostalcode" :disabled="deleteForm" />
           </div>
         </form>
       </template>
@@ -75,26 +79,29 @@
 <script>
 import NinjaModal from '@/components/NinjaModal.vue'
 import NinjaTable from '@/components/NinjaTable.vue'
-
+import { DataUser } from '@/models/dataUser'
 export default {
   name: 'Home',
   data () {
     return {
       table: {
         columns: [
-          'ID',
-          'FIRSTNAME',
-          'LASTNAME',
-          'EMAIL',
-          'BIRTHDATE',
-          'STREET',
-          'CITY',
-          'COUNTRY',
-          'POSTAL CODE'
+          { name: 'ACTIONS' },
+          { name: 'ID' },
+          { name: 'FIRSTNAME' },
+          { name: 'LASTNAME' },
+          { name: 'EMAIL' },
+          { name: 'BIRTHDATE' },
+          { name: 'ADDR.ID' },
+          { name: 'STREET' },
+          { name: 'CITY' },
+          { name: 'COUNTRY' },
+          { name: 'POSTAL CODE' }
         ],
         data: []
       },
-      userId: '',
+      deleteForm: false,
+      filterUserID: '',
       modal: {
         show: false,
         title: ''
@@ -104,48 +111,71 @@ export default {
         lastname: '',
         email: '',
         birthDate: '',
-        address: {
-          street: '',
-          city: '',
-          country: '',
-          postalcode: ''
-        }
+        addressStreet: '',
+        addressPostalcode: '',
+        addressCountry: '',
+        addressCity: ''
       }
     }
   },
   methods: {
+    async GET (id = '') {
+      const url = `${this.$apiService.BASEURL}/users/${this.filterUserID || id || ''}`
+      const result = await this.$apiService.get(url)
+      return result.map(item => {
+        const newObject = {}
+        Object.entries(item).forEach(everyItem => {
+          if (typeof everyItem[1] === 'object') {
+            Object.entries(everyItem[1]).forEach(item => {
+              const capitalize = (text) => `${text.charAt(0).toUpperCase()}${text.slice(1)}`
+              const key = `${everyItem[0]}${capitalize(item[0])}`
+              newObject[[key]] = item[1]
+            })
+          } else {
+            newObject[everyItem[0]] = everyItem[1]
+          }
+        })
+        return newObject
+      })
+    },
     async getUsers (evt) {
       const deleteCall = ['Backspace', 'Delete'].includes(evt?.key)
       const deleteEnter = ['Enter'].includes(evt?.key)
-      if ((deleteCall && this.userId.length === 0) || !evt?.key || deleteEnter) {
-        const url = `${this.$apiService.BASEURL}/users/${this.userId || ''}`
-        const result = await this.$apiService.get(url)
-        const r = result.map(item => {
-          if (typeof item === 'object') {
-            return item
-          } else {
-            return item
-          }
-        })
-        this.table.data = r
+      if ((deleteCall && this.filterUserID.length === 0) || !evt?.key || deleteEnter) {
+        this.table.data = await this.GET()
       }
     },
     showModal (evt) {
       const hasAction = evt.currentTarget?.dataset?.action || false
+      const id = evt.currentTarget?.dataset?.id || 0
       if (hasAction === 'POST') {
+        this.deleteForm = false
         this.modal.title = 'NEW USER'
       }
       if (hasAction === 'PUT') {
-        this.modal.title = 'MODIFY USER'
+        this.actionPUT(id)
       }
       if (hasAction === 'DELETE') {
-        this.modal.title = 'DELETE USER'
+        this.actionDELETE(id)
       }
       this.modal.show = hasAction && !this.modal.show
     },
-    acceptModal (evt) {
-      debugger
-    }
+    async parseApi2Front (id) {
+      const [userData] = await this.GET(id)
+      const model = new DataUser(userData)
+      this.$set(this, 'form', model)
+    },
+    actionDELETE (id) {
+      this.parseApi2Front(id)
+      this.deleteForm = true
+      this.modal.title = `DELETE USER WITH ID: ${id}`
+    },
+    actionPUT (id) {
+      this.parseApi2Front(id)
+      this.deleteForm = false
+      this.modal.title = `MODIFY USER WITH ID: ${id}`
+    },
+    acceptModal (evt) {}
   },
   mounted () {
     this.getUsers()
