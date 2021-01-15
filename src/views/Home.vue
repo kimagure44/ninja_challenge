@@ -119,7 +119,7 @@ export default {
     }
   },
   methods: {
-    async GET (id = '') {
+    async backGET (id = '') {
       const url = `${this.$apiService.BASEURL}/users/${this.filterUserID || id || ''}`
       const result = await this.$apiService.get(url)
       return result.map(item => {
@@ -142,7 +142,7 @@ export default {
       const deleteCall = ['Backspace', 'Delete'].includes(evt?.key)
       const deleteEnter = ['Enter'].includes(evt?.key)
       if ((deleteCall && this.filterUserID.length === 0) || !evt?.key || deleteEnter) {
-        this.table.data = await this.GET()
+        this.table.data = await this.backGET()
       }
     },
     showModal (evt) {
@@ -153,24 +153,24 @@ export default {
         this.modal.title = 'NEW USER'
       }
       if (hasAction === 'PUT') {
-        this.actionPUT(id)
+        this.frontPut(id)
       }
       if (hasAction === 'DELETE') {
-        this.actionDELETE(id)
+        this.frontDelete(id)
       }
       this.modal.show = hasAction && !this.modal.show
     },
     async parseApi2Front (id) {
-      const [userData] = await this.GET(id)
+      const [userData] = await this.backGET(id)
       const model = new DataUser(userData)
       this.$set(this, 'form', model)
     },
-    actionDELETE (id) {
+    frontDelete (id) {
       this.parseApi2Front(id)
       this.deleteForm = true
       this.modal.title = `DELETE USER WITH ID: ${id}`
     },
-    actionPUT (id) {
+    frontPut (id) {
       this.parseApi2Front(id)
       this.deleteForm = false
       this.modal.title = `MODIFY USER WITH ID: ${id}`
