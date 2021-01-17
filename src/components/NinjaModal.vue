@@ -1,5 +1,5 @@
 <template>
-  <div :class="['modal', show ? 'is-active' : '']">
+  <div :class="updateClass">
     <div class="modal-background"></div>
     <div class="modal-card">
       <header class="modal-card-head">
@@ -40,6 +40,11 @@ export default {
       }
     }
   },
+  computed: {
+    updateClass () {
+      return ['modal', this.show ? 'is-active' : '']
+    }
+  },
   methods: {
     closeModal () {
       this.$emit('update:showModal', !this.show)
@@ -47,7 +52,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="scss">
-
-</style>

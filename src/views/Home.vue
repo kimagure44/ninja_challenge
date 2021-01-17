@@ -129,7 +129,6 @@
             placeholder="42030"
             v-model="form.addressPostalcode"
             :disabled="disabledForm"
-            @keydown="maxLengthPostalCode"
           />
         </div>
       </template>
@@ -140,16 +139,16 @@
     </ninja-modal>
     <ninja-notification
       :show-notification.sync="showNotification"
-      :notificationMessage="notificationMessage"
+      :notification-message="notificationMessage"
       :type-notification="typeNotification"
     />
   </div>
 </template>
 
 <script>
-import NinjaModal from '@/components/NinjaModal.vue'
-import NinjaTable from '@/components/NinjaTable.vue'
-import NinjaNotification from '@/components/NinjaNotification.vue'
+import NinjaModal from '@/components/ninjaModal.vue'
+import NinjaTable from '@/components/ninjaTable.vue'
+import NinjaNotification from '@/components/ninjaNotification.vue'
 import { DataUser, DataUserResetValidations } from '@/models/dataUser'
 import { Utils } from '@/utils/utils'
 
@@ -272,7 +271,7 @@ export default {
       this.$set(this, 'form', model)
     },
     hideModal () {
-      this.modal.show = !this.modal.show
+      this.modal.show = false
     },
     showModal (evt) {
       const hasAction = evt.currentTarget?.dataset?.action || false
@@ -335,9 +334,6 @@ export default {
     resetValidations () {
       this.validations = new DataUserResetValidations()
     },
-    maxLengthPostalCode (evt) {
-      Utils.maxLength(evt, 5)
-    }
   },
   mounted () {
     this.getCountries()

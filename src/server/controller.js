@@ -12,11 +12,8 @@ exports.apiGET = (req, res) => {
       }
     } = req
     const result = database.data.filter(item => queryUserId || paramsUserId ? item.id === parseInt(queryUserId || paramsUserId) : item)
-    if (result.length === 0) {
-      res.status(404).send(JSON.stringify({ Description: 'USER NOT FOUND', Code: 404 }))
-    } else {
-      res.status(200).send(JSON.stringify(result))
-    }
+    const hasResult = result.length > 0
+    res.status(hasResult ? 200 : 404).send(JSON.stringify(hasResult ? result : { Description: 'USER NOT FOUND', Code: 404 }))
   } catch (err) {
     res.status(400).send(JSON.stringify({ Description: 'BAD REQUEST', Code: 400 }))
   }

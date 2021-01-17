@@ -35,13 +35,19 @@ export default {
       immediate: true,
       handler (value) {
         this.show = value
-        value && setTimeout(() => { this.$emit('update:showNotification', !this.show) }, this.timeOut)
+        value && setTimeout(() => { this.$emit('update:showNotification', false) }, this.timeOut)
       }
     }
   },
   computed: {
     updateClass () {
-      return ['notification', `is-${this.typeNotification}`, 'custom--notification', this.show ? 'show-notification' : 'hide-notification']
+      const validType = ['danger', 'success'].includes(this.typeNotification)
+      return [
+        'notification',
+        validType ? `is-${this.typeNotification}` : '',
+        'custom--notification',
+        this.show ? 'show-notification' : 'hide-notification'
+      ]
     }
   }
 }
