@@ -333,7 +333,7 @@ export default {
     },
     resetValidations () {
       this.validations = new DataUserResetValidations()
-    },
+    }
   },
   mounted () {
     this.getCountries()
