@@ -32,7 +32,7 @@
           />
         </tr>
         <tr v-if="hasRecords">
-          <td colspan="10" class="mx-3 is-justify-content-center">
+          <td :colspan="tableColumns.length" class="mx-3 is-justify-content-center">
             <div class="text-center">No record found</div>
           </td>
         </tr>

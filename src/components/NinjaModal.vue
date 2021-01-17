@@ -12,8 +12,7 @@
         <slot name="modal-body" />
       </section>
       <footer class="modal-card-foot">
-        <button class="button is-success" @click="acceptModal">Save changes</button>
-        <button class="button is-danger" @click="closeModal">Cancel</button>
+        <slot name="modal-footer" />
       </footer>
     </div>
   </div>
@@ -26,10 +25,6 @@ export default {
     showModal: {
       type: Boolean,
       default: false
-    },
-    modalTitle: {
-      type: String,
-      default: ''
     }
   },
   data () {
@@ -48,9 +43,6 @@ export default {
   methods: {
     closeModal () {
       this.$emit('update:showModal', !this.show)
-    },
-    acceptModal () {
-      this.$emit('accept-modal')
     }
   }
 }

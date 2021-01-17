@@ -1,5 +1,6 @@
 export const DataUser = (dataUser) => {
   const {
+    id = '',
     addressCity = '',
     addressCountry = '',
     addressPostalcode = '',
@@ -10,6 +11,7 @@ export const DataUser = (dataUser) => {
     lastname = ''
   } = dataUser
   return {
+    id,
     addressCity,
     addressCountry,
     addressPostalcode,
@@ -20,3 +22,14 @@ export const DataUser = (dataUser) => {
     lastname
   }
 }
+
+export const DataUserResetValidations = () => ({
+  inputFirstname: true,
+  inputLastname: true,
+  inputEmail: true,
+  inputBirthDate: true,
+  inputAddressStreet: true,
+  inputAddressCity: true,
+  inputAddressCountry: true,
+  inputAddressPostalcode: true
+})
