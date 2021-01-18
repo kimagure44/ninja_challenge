@@ -21,14 +21,10 @@ exports.apiGET = (req, res) => {
 
 exports.apiPOST = (req, res) => {
   try {
-    const {
-      query: {
-        form: queryForm = null
-      } = {},
-      params: {
-        form: paramsForm = null
-      } = {}
-    } = req
+    const queryForm = req?.query?.form && JSON.parse(req.query.form)
+    const paramsForm =  req?.params?.form && JSON.parse(req.params.form)
+    const query = Object.keys(req?.query).length && req.query
+    const params = Object.keys(req?.params).length && req.params
     const {
       firstname,
       lastname,
@@ -38,7 +34,7 @@ exports.apiPOST = (req, res) => {
       addressPostalcode,
       addressCountry,
       addressCity
-    } = queryForm && JSON.parse(queryForm) || paramsForm && JSON.parse(paramsForm)
+    } = queryForm || paramsForm || query || params
     database.data.push({
       id: database.data.length + 1,
       firstname,
@@ -55,6 +51,7 @@ exports.apiPOST = (req, res) => {
     })
     res.status(201).send(JSON.stringify({ Description: 'CREATED', Code: 201 }))
   } catch (err) {
+    console.log(err)
     res.status(405).send(JSON.stringify({ Description: 'INVALID INPUT', Code: 405 }))
   }
 }
