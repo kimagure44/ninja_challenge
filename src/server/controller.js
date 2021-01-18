@@ -35,14 +35,15 @@ exports.apiPOST = (req, res) => {
       addressCountry,
       addressCity
     } = queryForm || paramsForm || query || params
+    const id = parseInt(database.data[database.data.length - 1].id) + 1
     database.data.push({
-      id: database.data.length + 1,
+      id,
       firstname,
       lastname,
       email,
       birthDate,
       address: {
-        id: database.data.length + 1,
+        id,
         street: addressStreet,
         city: addressCity,
         country: addressCountry,
