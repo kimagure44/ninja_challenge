@@ -1,5 +1,5 @@
 export const apiService = {
-  BASE_URL: 'http://localhost:8081',
+  BASE_URL: 'http://localhost:17362',
   COUNTRIES_URL: 'https://restcountries.eu/rest/v2/all',
   call: async (url = '', verb = '', params = {}) => {
     const config = {
