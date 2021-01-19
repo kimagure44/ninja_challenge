@@ -1,5 +1,5 @@
 const fakeData = require('./database')
-let database = fakeData()
+const database = fakeData()
 
 exports.apiGET = (req, res) => {
   try {
@@ -21,10 +21,11 @@ exports.apiGET = (req, res) => {
 
 exports.apiPOST = (req, res) => {
   try {
-    const queryForm = req?.query?.form && JSON.parse(req.query.form)
-    const paramsForm =  req?.params?.form && JSON.parse(req.params.form)
-    const query = Object.keys(req?.query).length && req.query
-    const params = Object.keys(req?.params).length && req.params
+    const queryForm = (((req || {}).query || {}).form || null) && JSON.parse(req.query.form)
+    const paramsForm = (((req || {}).params || {}).form || null) && JSON.parse(req.params.form)
+    const query = Object.keys((req || {}).query || []).length && req.query
+    const params = Object.keys((req || {}).params || []).length && req.params
+
     const {
       firstname,
       lastname,
@@ -35,6 +36,7 @@ exports.apiPOST = (req, res) => {
       addressCountry,
       addressCity
     } = queryForm || paramsForm || query || params
+    console.log(queryForm || paramsForm || query || params)
     const id = parseInt(database.data[database.data.length - 1].id) + 1
     database.data.push({
       id,
@@ -102,7 +104,7 @@ exports.apiPUT = (req, res) => {
   } catch (err) {
     res.status(400).send(JSON.stringify({ Description: 'BAD REQUEST', Code: 400 }))
   }
-};
+}
 
 exports.apiDELETE = (req, res) => {
   try {
@@ -115,11 +117,11 @@ exports.apiDELETE = (req, res) => {
       }
     } = req
     const {
-      id,
+      id
     } = queryUserId && JSON.parse(queryUserId) || paramsUserId && JSON.parse(paramsUserId)
     const result = database.data.map((item, index, arr) => {
       if (item.id === parseInt(queryUserId || paramsUserId)) {
-        arr.splice(index,1)
+        arr.splice(index, 1)
         return false
       } else {
         return item
